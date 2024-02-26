@@ -1,3 +1,4 @@
+import { Player } from "@/interfaces/Player";
 import {
   selectPlayers,
   selectRoundFail,
@@ -21,15 +22,15 @@ function missionCount(missionResult: string[]) {
 
 // 미션 성공, 실패 판정 방법?
 export default function MissionResult() {
-  const roundNumber =
-    useSelector(selectRoundSuccess) + useSelector(selectRoundFail) + 1;
+  const missionRoundNumber =
+    useSelector(selectRoundSuccess) + useSelector(selectRoundFail);
   const players = useSelector(selectPlayers);
   const missionTeam = useSelector(selectMissionTeam);
   const openMission = useSelector(selectMission);
   const { successCount, failCount } = missionCount(Object.values(missionTeam));
   const isMissionSuccessful =
     Object.values(missionTeam).every((v) => v === "success") ||
-    (players.length >= 7 && failCount <= 1);
+    (players.length >= 7 && failCount <= 1 && missionRoundNumber === 4);
   const dispatch = useDispatch();
   return (
     <Modal
