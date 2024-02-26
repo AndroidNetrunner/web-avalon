@@ -1,4 +1,3 @@
-import { Player } from "@/interfaces/Player";
 import {
   selectPlayers,
   selectRoundFail,

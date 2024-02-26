@@ -1,4 +1,4 @@
-type Role =
+export type Role =
   | "멀린"
   | "암살자"
   | "선의 세력"
@@ -8,7 +8,7 @@ type Role =
   | "모르가나"
   | "오베론";
 
-interface Player {
+export interface Player {
   userId: string;
   username: string;
   gameId: string;

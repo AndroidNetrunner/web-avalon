@@ -1,3 +1,8 @@
+import { GOOD_ROLES } from "@/constants/roles";
+import winDescriptions, {
+  winDescription as WinDescription,
+} from "@/constants/winDescsriptions";
+import { Player } from "@/interfaces/Player";
 import { resetGame, selectPlayers } from "@/redux/slices/gameSlice";
 import { resetRoom } from "@/redux/slices/roomSlice";
 import { selectLeader } from "@/redux/slices/roundSlice";
@@ -7,6 +12,16 @@ import Title from "antd/es/typography/Title";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+
+interface FinalResultProps {
+  description: WinDescription;
+}
+
+const renderRole = (role: string) => {
+  const color = GOOD_ROLES.includes(role) ? "blue" : "red";
+  return <StyledSpan color={color}>{role}</StyledSpan>;
+};
 
 const columns = [
   {
@@ -18,36 +33,62 @@ const columns = [
     title: "역할",
     dataIndex: "role",
     key: "role",
-    render: (role: string) => {
-      if (["멀린", "퍼시발", "선의 세력"].includes(role))
-        return (
-          <span style={{ color: "blue", fontWeight: "bold" }}>{role}</span>
-        );
-      return <span style={{ color: "red", fontWeight: "bold" }}>{role}</span>;
-    },
+    render: renderRole,
   },
 ];
 
-function isGoodWin(description: string) {
-  switch (description) {
-    case "암살 성공으로 인한 악의 하수인 승리":
-      return false;
-    case "미션 3번 실패로 인한 악의 하수인 승리":
-      return false;
-    case "투표 5번 부결로 인한 악의 하수인 승리":
-      return false;
-    case "미션 3번 성공 및 암살 실패로 인한 선의 세력 승리":
-      return true;
-  }
-}
-
-export default function FinalResult({ description }: { description: string }) {
+export default function FinalResult({ description }: FinalResultProps) {
   const players = useSelector(selectPlayers);
-  const goodWin = isGoodWin(description);
+  const goodWin = winDescriptions[description];
   const dispatch = useDispatch();
   const leader = useSelector(selectLeader);
   const myUserId = useSelector(selectUserId);
   const isLeader = leader === myUserId;
+  useGameEndAnalytics(goodWin, isLeader);
+  const handlePlayAgain = () => {
+    localStorage.removeItem("gameId");
+    dispatch(resetGame());
+  };
+  const handleExit = () => {
+    localStorage.removeItem("userId");
+    dispatch(resetRoom());
+    dispatch(resetUser());
+  };
+  return (
+    <>
+      <GameStatus goodWin={goodWin} />
+      <WinDescription description={description} />
+      <PlayerTable players={players} />
+      <StyledDiv>
+        <Button type="primary" onClick={handlePlayAgain}>
+          한 번 더!
+        </Button>
+        <Button type="primary" onClick={handleExit} danger>
+          처음으로
+        </Button>
+      </StyledDiv>
+    </>
+  );
+}
+
+const StyledDiv = styled("div")`
+   {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+  }
+`;
+
+const StyledSpan = styled("span")<{ color: string }>`
+  color: ${(props) => props.color};
+  font-weight: bold;
+`;
+
+const StyledTitle = styled(Title)<{ goodWin: boolean }>`
+  color: ${(props) => (props.goodWin ? "blue" : "red")};
+`;
+
+const useGameEndAnalytics = (goodWin: boolean, isLeader: boolean) => {
   useEffect(() => {
     const analytics = getAnalytics();
     if (isLeader) {
@@ -56,40 +97,23 @@ export default function FinalResult({ description }: { description: string }) {
       });
     }
   }, [goodWin, isLeader]);
-  return (
-    <>
-      <Title level={4} style={{ color: goodWin ? "blue" : "red" }}>
-        {goodWin ? "선의 세력 승리" : "악의 하수인 승리"}
-      </Title>
-      <Title level={5}>{description}</Title>
-      <Table
-        style={{ marginBottom: "1rem" }}
-        columns={columns}
-        pagination={false}
-        dataSource={players}
-      />
-      <div style={{ display: "flex", justifyContent: "center", gap: "3rem" }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            localStorage.removeItem("gameId");
-            dispatch(resetGame());
-          }}
-        >
-          한 번 더!
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            localStorage.removeItem("userId");
-            dispatch(resetRoom());
-            dispatch(resetUser());
-          }}
-          danger
-        >
-          처음으로
-        </Button>
-      </div>
-    </>
-  );
-}
+};
+
+const GameStatus = ({ goodWin }: { goodWin: boolean }) => (
+  <StyledTitle level={4} goodWin={goodWin}>
+    {goodWin ? "선의 세력 승리" : "악의 하수인 승리"}
+  </StyledTitle>
+);
+
+const WinDescription = ({ description }: { description: WinDescription }) => (
+  <Title level={5}>{description}</Title>
+);
+
+const PlayerTable = ({ players }: { players: Player[] }) => (
+  <Table
+    style={{ marginBottom: "1rem" }}
+    columns={columns}
+    pagination={false}
+    dataSource={players}
+  />
+);

@@ -4,13 +4,26 @@ import { ref, update } from "firebase/database";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
+import { Player } from "@/interfaces/Player";
+
+const TARGET_ROLES = ["멀린", "퍼시발", "오베론", "선의 세력"];
+interface Options {
+  label: string;
+  value: string;
+}
+
+interface AssassinationViewProps {
+  options: Options[];
+  onChange: (e: RadioChangeEvent) => void;
+  handleAssassin: () => void;
+}
 
 export default function Assassination() {
-  const players = useSelector(selectPlayers);
-  const candidates = players.filter((player) =>
-    ["멀린", "퍼시발", "오베론", "선의 세력"].includes(player.role)
+  const players: Player[] = useSelector(selectPlayers);
+  const candidates: Player[] = players.filter((player) =>
+    TARGET_ROLES.includes(player.role)
   );
-  const options = candidates.map((player) => ({
+  const options: Options[] = candidates.map((player) => ({
     label: player.username,
     value: player.userId,
   }));
@@ -19,15 +32,33 @@ export default function Assassination() {
   const onChange = (e: RadioChangeEvent) => {
     setTarget(e.target.value);
   };
-  const handleAssassin = () => {
+  const handleAssassin = async () => {
     const isMerlin =
       players.find((player) => player.userId === target)?.role === "멀린";
-    update(ref(database, "games/" + gameId), {
-      "/description": isMerlin
-        ? "암살 성공으로 인한 악의 하수인 승리"
-        : "미션 3번 성공 및 암살 실패로 인한 선의 세력 승리",
-    });
+    try {
+      await update(ref(database, "games/" + gameId), {
+        "/description": isMerlin
+          ? "암살 성공으로 인한 악의 하수인 승리"
+          : "미션 3번 성공 및 암살 실패로 인한 선의 세력 승리",
+      });
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
+  return (
+    <AssassinationView
+      options={options}
+      onChange={onChange}
+      handleAssassin={handleAssassin}
+    />
+  );
+}
+
+function AssassinationView({
+  options,
+  onChange,
+  handleAssassin,
+}: AssassinationViewProps) {
   return (
     <>
       <Card

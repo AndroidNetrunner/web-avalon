@@ -3,12 +3,13 @@ import {
   selectParticipants,
 } from "@/redux/slices/roomSlice";
 import { Alert, Button } from "antd";
-import { ref, remove, set, update } from "firebase/database";
+import { ref, remove, update } from "firebase/database";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { getAnalytics, logEvent } from "firebase/analytics";
+import { Player, Role } from "@/interfaces/Player";
 
-const maxEvilSpecialRoles = {
+const MAX_EVIL_SPECIAL_ROLES = {
   5: 1,
   6: 1,
   7: 2,
@@ -16,6 +17,9 @@ const maxEvilSpecialRoles = {
   9: 3,
   10: 3,
 };
+
+const MIN_PARTICIPANTS = 5;
+const MAX_PARTICIPANTS = 10;
 
 export default function GameStartButton({
   specialRoles,
@@ -27,17 +31,27 @@ export default function GameStartButton({
   const evilSpecialRoles = specialRoles.filter((role) => role !== "퍼시발");
   const goodSpecialRoles = specialRoles.filter((role) => role === "퍼시발");
   const canGameStart =
-    participants.length >= 5 &&
-    participants.length <= 10 &&
+    participants.length >= MIN_PARTICIPANTS &&
+    participants.length <= MAX_PARTICIPANTS &&
     evilSpecialRoles.length <=
-      maxEvilSpecialRoles[participants.length as 5 | 6 | 7 | 8 | 9 | 10];
+      MAX_EVIL_SPECIAL_ROLES[participants.length as 5 | 6 | 7 | 8 | 9 | 10];
 
   const handleGameStart = () => {
+    const roles = prepareRoles();
+    shuffle(roles);
+    const players = makePlayers(roles);
+    const leader = chooseLeader();
+    updateGame(players, leader.userId);
+    remove(ref(database, "rooms/" + invitationCode));
+    logGameStart();
+  };
+
+  const prepareRoles: () => Role[] = () => {
     goodSpecialRoles.push("멀린");
     evilSpecialRoles.push("암살자");
     const numberOfParticipants = participants.length;
     const numberOfEvilPlayers =
-      maxEvilSpecialRoles[numberOfParticipants as 5 | 6 | 7 | 8 | 9 | 10] +
+      MAX_EVIL_SPECIAL_ROLES[numberOfParticipants as 5 | 6 | 7 | 8 | 9 | 10] +
       1 -
       evilSpecialRoles.length;
     const numberOfGoodPlayers =
@@ -52,21 +66,32 @@ export default function GameStartButton({
     for (let i = 0; i < numberOfGoodPlayers; i++) {
       allRoles.push("선의 세력");
     }
-    shuffle(allRoles);
+    return allRoles as Role[];
+  };
+
+  const makePlayers = (roles: Role[]) => {
     let players: {
       [key: string]: { userId: string; username: string; role: Role };
     } = {};
     participants.forEach((participant, index) => {
       players[participant.userId] = {
         ...participant,
-        role: allRoles[index] as Role,
+        role: roles[index],
       };
     });
-    const randomLeaderIndex = Math.floor(Math.random() * numberOfParticipants);
-    const selectedLeaderId = Object.keys(players)[randomLeaderIndex];
+    return players;
+  };
+
+  const chooseLeader = () => {
+    const randomIndex = Math.floor(Math.random() * participants.length);
+    const leader = participants[randomIndex];
+    return leader;
+  };
+
+  const updateGame = (players: Object, leader: string) => {
     update(ref(database, "games/" + invitationCode), {
       "/players": players,
-      "/leader": selectedLeaderId,
+      "/leader": leader,
       "/roundSuccess": 0,
       "/roundFail": 0,
       "/team": {},
@@ -74,14 +99,16 @@ export default function GameStartButton({
       "/vote": {},
       "/stage": "nomination",
     });
-    remove(ref(database, "rooms/" + invitationCode));
+  };
+
+  const logGameStart = () => {
     const analytics = getAnalytics();
     logEvent(analytics, "gameStart", {
       gameId: invitationCode,
     });
   };
 
-  const errorMessage = () => {
+  const getErrorMessage = () => {
     if (participants.length < 5) {
       return "최소 5명이 있어야 게임을 시작할 수 있습니다.";
     }
@@ -90,7 +117,7 @@ export default function GameStartButton({
     }
     if (
       evilSpecialRoles.length >
-      maxEvilSpecialRoles[participants.length as 5 | 6 | 7 | 8 | 9 | 10]
+      MAX_EVIL_SPECIAL_ROLES[participants.length as 5 | 6 | 7 | 8 | 9 | 10]
     ) {
       return "악역의 수가 너무 많습니다.";
     }
@@ -104,7 +131,7 @@ export default function GameStartButton({
       </div>
       {!canGameStart && (
         <Alert
-          message={errorMessage()}
+          message={getErrorMessage()}
           type="error"
           showIcon
           style={{ marginBottom: "1rem" }}
