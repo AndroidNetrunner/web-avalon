@@ -1,22 +1,12 @@
-import { selectPlayers } from "@/redux/slices/gameSlice";
-import { selectVote as openVote, setVote } from "@/redux/slices/resultSlice";
-import { selectVote as selectAllVotes } from "@/redux/slices/roundSlice";
+import useVoteResult from "@/hooks/useVoteResult";
+import useVoteResultState from "@/hooks/useVoteResultState";
 import { Button, Modal } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 export default function VoteResult() {
-  const players = useSelector(selectPlayers);
-  const allVotes = useSelector(selectAllVotes);
-  const agree = players
-    .filter((player) => allVotes[player.userId] === "agree")
-    .map((player) => player.username);
-  const disagree = players
-    .filter((player) => allVotes[player.userId] === "disagree")
-    .map((player) => player.username);
-  const isPassed = agree.length > disagree.length;
-  const openVoteResultModal = useSelector(openVote);
-  const dispatch = useDispatch();
+  const { agree, disagree, isPassed, openVoteResultModal } =
+    useVoteResultState();
+  const { handleClose } = useVoteResult();
   return (
     <Modal
       open={openVoteResultModal}
@@ -26,7 +16,7 @@ export default function VoteResult() {
         </span>
       }
       footer={
-        <Button type="primary" onClick={() => dispatch(setVote(false))}>
+        <Button type="primary" onClick={handleClose}>
           확인
         </Button>
       }

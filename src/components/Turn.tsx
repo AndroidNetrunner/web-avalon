@@ -22,12 +22,15 @@ import VoteResult from "./VoteResult";
 import MissionResult from "./MissionResult";
 import RoundStep from "./RoundStep";
 import Assassination from "./Assassination";
+import { WinDescription } from "@/constants/winDescsriptions";
+import { Role } from "@/interfaces/Player";
 
 export default function Turn() {
   const myUserId = useSelector(selectUserId);
   const myRole = useSelector(selectPlayers).find(
     (player) => player.userId === myUserId
   )?.role;
+  if (!myRole) throw new Error("역할을 배정받지 못했습니다.");
   const leader = useSelector(selectLeader);
   const vote = useSelector(selectVote);
   const missionTeam = useSelector(selectMissionTeam);
@@ -36,7 +39,7 @@ export default function Turn() {
   const stage = useSelector(selectStage);
   const roundSuccess = useSelector(selectRoundSuccess);
   const roundFail = useSelector(selectRoundFail);
-  const description = useSelector(selectDescription);
+  const description: WinDescription | null = useSelector(selectDescription);
   useEffect(() => {
     if (
       (stage === "nomination" && Object.values(vote).length > 0) ||
@@ -57,24 +60,73 @@ export default function Turn() {
   return (
     <>
       <RoundStep />
-      {stage === "nomination" &&
-        isMyTurn &&
-        roundSuccess < 3 &&
-        roundFail < 3 && <Nomination />}
-      {stage === "vote" &&
-        !vote[myUserId] &&
-        roundSuccess < 3 &&
-        roundFail < 3 && <Vote />}
-      {stage === "mission" &&
-        Object.keys(missionTeam).includes(myUserId) &&
-        missionTeam[myUserId] === "none" &&
-        roundSuccess < 3 &&
-        roundFail < 3 && <Mission />}
-      {roundSuccess >= 3 && !description && myRole === "암살자" && (
-        <Assassination />
+      {stage === "nomination" && (
+        <NominationTurn {...{ isMyTurn, roundSuccess, roundFail }} />
       )}
+      {stage === "vote" && (
+        <VoteTurn {...{ myUserId, vote, roundSuccess, roundFail }} />
+      )}
+      {stage === "mission" && (
+        <MissionTurn {...{ myUserId, missionTeam, roundSuccess, roundFail }} />
+      )}
+      {roundSuccess >= 3 && <AssassinationTurn {...{ description, myRole }} />}
       <VoteResult />
       <MissionResult />
     </>
   );
+}
+
+function NominationTurn({
+  isMyTurn,
+  roundSuccess,
+  roundFail,
+}: {
+  isMyTurn: boolean;
+  roundSuccess: number;
+  roundFail: number;
+}) {
+  return isMyTurn && roundSuccess < 3 && roundFail < 3 ? <Nomination /> : null;
+}
+
+function VoteTurn({
+  myUserId,
+  vote,
+  roundSuccess,
+  roundFail,
+}: {
+  myUserId: string;
+  vote: Record<string, string>;
+  roundSuccess: number;
+  roundFail: number;
+}) {
+  return !vote[myUserId] && roundSuccess < 3 && roundFail < 3 ? <Vote /> : null;
+}
+
+function MissionTurn({
+  myUserId,
+  missionTeam,
+  roundSuccess,
+  roundFail,
+}: {
+  myUserId: string;
+  missionTeam: Record<string, string>;
+  roundSuccess: number;
+  roundFail: number;
+}) {
+  return Object.keys(missionTeam).includes(myUserId) &&
+    missionTeam[myUserId] === "none" &&
+    roundSuccess < 3 &&
+    roundFail < 3 ? (
+    <Mission />
+  ) : null;
+}
+
+function AssassinationTurn({
+  description,
+  myRole,
+}: {
+  description: WinDescription | null;
+  myRole: Role;
+}) {
+  return !description && myRole === "암살자" ? <Assassination /> : null;
 }

@@ -1,4 +1,4 @@
-export type winDescription = keyof typeof winDescriptions;
+export type WinDescription = keyof typeof winDescriptions;
 
 const winDescriptions = {
   "암살 성공으로 인한 악의 하수인 승리": false,

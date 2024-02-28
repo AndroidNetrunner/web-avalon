@@ -1,4 +1,4 @@
-import { winDescription } from "@/constants/winDescsriptions";
+import { WinDescription } from "@/constants/winDescsriptions";
 import { Player, Role } from "@/interfaces/Player";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -7,7 +7,7 @@ interface GameState {
   players: Player[];
   roundSuccess: number;
   roundFail: number;
-  description: winDescription | null;
+  description: WinDescription | null;
 }
 
 const initialState: GameState = {
@@ -43,7 +43,7 @@ const gameSlice = createSlice({
     setRoundFail: (state, action: PayloadAction<number>) => {
       state.roundFail = action.payload;
     },
-    setDescription: (state, action: PayloadAction<winDescription>) => {
+    setDescription: (state, action: PayloadAction<WinDescription>) => {
       state.description = action.payload;
     },
     resetGame: () => {

@@ -7,12 +7,17 @@ import {
 } from "@/redux/slices/roomSlice";
 import { Table, Typography } from "antd";
 import { Content } from "antd/es/layout/layout";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Options from "./Options";
 import GameStartButton from "./GameStartButton";
 import { database } from "../../firebase.config";
-import { onDisconnect, onValue, ref } from "firebase/database";
+import {
+  DatabaseReference,
+  onDisconnect,
+  onValue,
+  ref,
+} from "firebase/database";
 import { DocumentData } from "firebase/firestore";
 import { setGameId } from "@/redux/slices/gameSlice";
 import { selectUserId } from "@/redux/slices/userSlice";
@@ -39,11 +44,11 @@ const convertObjectToParticipantsArray = (object: {
   });
 };
 
-export default function Room() {
-  const participants = useSelector(selectParticipants);
-  const invitationCode = useSelector(selectInvitationCode);
-  const roomRef = ref(database, "rooms/" + invitationCode);
-  const myUserId = useSelector(selectUserId);
+const useRoomData = (
+  roomRef: DatabaseReference,
+  participants: Participant[],
+  invitationCode: string
+) => {
   const dispatch = useDispatch();
   useEffect(() => {
     onValue(roomRef, (snapshot) => {
@@ -64,18 +69,26 @@ export default function Room() {
       }
     });
   }, [participants, dispatch, roomRef, invitationCode]);
+};
 
+const columns = [{ title: "닉네임", dataIndex: "username", key: "username" }];
+
+export default function Room() {
+  const participants = useSelector(selectParticipants);
+  const invitationCode = useSelector(selectInvitationCode);
+  const roomRef = ref(database, "rooms/" + invitationCode);
+  const myUserId = useSelector(selectUserId);
+  useRoomData(roomRef, participants, invitationCode);
   useEffect(() => {
     const userRef = ref(
       database,
       "rooms/" + invitationCode + "/participants/" + myUserId
     );
-    void onDisconnect(userRef).remove();
+    onDisconnect(userRef).remove();
   }, [invitationCode, myUserId]);
 
   const { Title } = Typography;
-  const columns = [{ title: "닉네임", dataIndex: "username", key: "username" }];
-  const [specialRoles, setSpecialRoles] = React.useState<string[]>([]);
+  const [specialRoles, setSpecialRoles] = useState<string[]>([]);
   const ownerId = useSelector(selectOwnerId);
   return (
     <>

@@ -1,19 +1,18 @@
+import { SPECIAL_ROLES } from "@/constants/roles";
 import { Checkbox } from "antd";
 
-const options = ["퍼시발", "모드레드", "모르가나", "오베론"];
-
-export default function Options({
-  setSpecialRoles,
-}: {
+interface OptionsProps {
   setSpecialRoles: React.Dispatch<React.SetStateAction<string[]>>;
-}) {
-  const onChange = (checkedValues: string[]) => {
+}
+
+export default function Options({ setSpecialRoles }: OptionsProps) {
+  const handleCheckboxChange = (checkedValues: string[]) => {
     setSpecialRoles(checkedValues);
   };
 
   return (
     <div style={{ margin: "1rem 0" }}>
-      <Checkbox.Group options={options} onChange={onChange} />
+      <Checkbox.Group options={SPECIAL_ROLES} onChange={handleCheckboxChange} />
     </div>
   );
 }

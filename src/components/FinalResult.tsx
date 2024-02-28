@@ -1,6 +1,6 @@
 import { GOOD_ROLES } from "@/constants/roles";
 import winDescriptions, {
-  winDescription as WinDescription,
+  WinDescription as WinDescription,
 } from "@/constants/winDescsriptions";
 import { Player } from "@/interfaces/Player";
 import { resetGame, selectPlayers } from "@/redux/slices/gameSlice";

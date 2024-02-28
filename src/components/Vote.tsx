@@ -1,29 +1,26 @@
-import {
-  selectGameId,
-  selectPlayers,
-  selectRoundFail,
-  selectRoundSuccess,
-} from "@/redux/slices/gameSlice";
-import {
-  selectElection,
-  selectLeader,
-  selectTeam,
-  selectVote,
-} from "@/redux/slices/roundSlice";
-import { Button, Card, Space } from "antd";
-import { useSelector } from "react-redux";
+import { Button, Card } from "antd";
 import { useVote } from "@/hooks/useVote";
+import useVoteState from "@/hooks/useVoteState";
+
+function VoteButton({
+  type,
+  handleVote,
+}: {
+  type: "agree" | "disagree";
+  handleVote: (type: "agree" | "disagree") => void;
+}) {
+  const buttonText = type === "agree" ? "찬성" : "반대";
+  const danger = type !== "agree";
+
+  return (
+    <Button type="primary" onClick={() => handleVote(type)} danger={danger}>
+      {buttonText}
+    </Button>
+  );
+}
 
 export default function Vote() {
-  const players = useSelector(selectPlayers);
-  const leaderId = useSelector(selectLeader);
-  const leader = players.find((player) => player.userId === leaderId);
-  if (!leader) throw new Error("Leader not found");
-  const election = useSelector(selectElection);
-  const roundSuccess = useSelector(selectRoundSuccess);
-  const roundFail = useSelector(selectRoundFail);
-  const round = roundSuccess + roundFail + 1;
-  const team = useSelector(selectTeam);
+  const { players, leader, round, team, election } = useVoteState();
   const { handleVote } = useVote();
 
   return (
@@ -47,12 +44,8 @@ export default function Vote() {
         <p>아래 버튼을 눌러 찬성, 반대표를 던져주세요.</p>
       </Card>
       <div style={{ display: "flex", justifyContent: "center", gap: "3rem" }}>
-        <Button type="primary" onClick={() => handleVote("agree")}>
-          찬성
-        </Button>
-        <Button type="primary" onClick={() => handleVote("disagree")} danger>
-          반대
-        </Button>
+        <VoteButton type="agree" handleVote={handleVote} />
+        <VoteButton type="disagree" handleVote={handleVote} />
       </div>
     </>
   );

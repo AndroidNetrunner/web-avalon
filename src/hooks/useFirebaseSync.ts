@@ -33,7 +33,7 @@ const isSamePlayersWithFirebaseStore = (
     return JSON.stringify(data.players) === JSON.stringify(convertedOriginal);
 };
 
-const useFirebaseSync = () => {
+const useFirebaseGameSync = () => {
   const players = useSelector(selectPlayers);
   const gameId = useSelector(selectGameId);
   const gameRef = ref(database, "games/" + gameId);
@@ -62,4 +62,4 @@ const useFirebaseSync = () => {
   }, [gameRef, dispatch, players]);
 };
 
-export default useFirebaseSync;
+export default useFirebaseGameSync;

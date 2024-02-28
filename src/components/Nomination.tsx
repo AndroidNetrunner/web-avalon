@@ -9,14 +9,25 @@ import { ref, update } from "firebase/database";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
-const numberOfNomination = {
-  5: [2, 3, 2, 3, 3],
-  6: [2, 3, 4, 3, 4],
-  7: [2, 3, 3, 4, 4],
-  8: [3, 4, 4, 5, 5],
-  9: [3, 4, 4, 5, 5],
-  10: [3, 4, 4, 5, 5],
-};
+import { Player } from "@/interfaces/Player";
+import { numberOfNomination } from "@/constants/nomination";
+
+function createVoteObject(players: Player[]) {
+  let vote: {
+    [key: string]: "agree" | "disagree" | "";
+  } = {};
+  players.forEach((player) => {
+    vote[player.userId] = "";
+  });
+  return vote;
+}
+
+function createTeamObject(team: string[]) {
+  return team.reduce((obj: Record<string, string>, member) => {
+    obj[member] = member;
+    return obj;
+  }, {});
+}
 
 export default function Nomination() {
   const players = useSelector(selectPlayers);
@@ -30,17 +41,9 @@ export default function Nomination() {
   const handleChange = (checkedValue: string[]) => {
     setTeam(checkedValue);
   };
-  let vote: {
-    [key: string]: "agree" | "disagree" | "";
-  } = {};
-  players.forEach((player) => {
-    vote[player.userId] = "";
-  });
+  const vote = createVoteObject(players);
   const handleSubmit = () => {
-    const teamObject = team.reduce((obj: Record<string, string>, member) => {
-      obj[member] = member;
-      return obj;
-    }, {});
+    const teamObject = createTeamObject(team);
     update(ref(database, "games/" + gameId), {
       "/team": teamObject,
       "/vote": vote,
