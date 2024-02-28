@@ -12,7 +12,8 @@ import FinalResult from "./FinalResult";
 import GamePlay from "./GamePlay";
 import { EVIL_ROLES } from "@/constants/roles";
 import { Player } from "@/interfaces/Player";
-import useFirebaseSync from "@/hooks/useFirebaseSync";
+import useFirebaseGameSync from "@/hooks/useFirebaseSync";
+import ResetButton from "./ResetButton";
 
 export default function Game() {
   const myUserId = useSelector(selectUserId);
@@ -23,7 +24,7 @@ export default function Game() {
     return player.userId === myUserId;
   });
 
-  useFirebaseSync();
+  useFirebaseGameSync();
   useEffect(() => {
     localStorage.setItem("userId", myUserId);
     localStorage.setItem("gameId", gameId);
@@ -35,6 +36,7 @@ export default function Game() {
 
   return (
     <Content>
+      <ResetButton />
       {description && <FinalResult description={description} />}
       {!description && <GamePlay isEvil={isEvil} role={myself.role} />}
     </Content>
