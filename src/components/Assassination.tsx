@@ -63,7 +63,7 @@ function AssassinationView({
     <>
       <Card
         style={{ marginBottom: "1rem" }}
-        title={"암살자인 당신은 단 한 번, 멀린 암살을 시도합니다."}
+        title={"암살자는 단 한 번, 멀린 암살을 시도합니다."}
       >
         <p>멀린을 암살하면 악의 하수인이 역전승합니다.</p>
         <p>아래 버튼을 이용해 암살대상을 한 명 골라주세요.</p>
