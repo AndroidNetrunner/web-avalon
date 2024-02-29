@@ -16,6 +16,7 @@ interface AssassinationViewProps {
   options: Options[];
   onChange: (e: RadioChangeEvent) => void;
   handleAssassin: () => void;
+  target: string;
 }
 
 export default function Assassination() {
@@ -47,6 +48,7 @@ export default function Assassination() {
   };
   return (
     <AssassinationView
+      target={target}
       options={options}
       onChange={onChange}
       handleAssassin={handleAssassin}
@@ -58,6 +60,7 @@ function AssassinationView({
   options,
   onChange,
   handleAssassin,
+  target,
 }: AssassinationViewProps) {
   return (
     <>
@@ -69,7 +72,7 @@ function AssassinationView({
         <p>아래 버튼을 이용해 암살대상을 한 명 골라주세요.</p>
       </Card>
       <Radio.Group options={options} onChange={onChange} />
-      <Button type="primary" onClick={handleAssassin}>
+      <Button disabled={!target} type="primary" onClick={handleAssassin}>
         암살
       </Button>
     </>
