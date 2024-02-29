@@ -1,15 +1,23 @@
 "use client";
 
 import React from "react";
-import { Form, Input, Button, Typography } from "antd";
+import { Form, Input, Button, Typography, Alert } from "antd";
 import useEnterRoom from "@/hooks/useEnterRoom";
 import styled from "styled-components";
+
+const INVITATION_CODE_LENGTH = 6;
 
 const Entry = () => {
   const [username, setUsername] = React.useState("");
   const [invitationCode, setInvitationCode] = React.useState("");
   const { Title } = Typography;
-  const { handleCreateRoom, handleJoinRoom } = useEnterRoom();
+  const {
+    handleCreateRoom,
+    handleJoinRoom,
+    error,
+    isErrorModalOpen,
+    handleCloseErrorModal,
+  } = useEnterRoom();
 
   const canCreateRoom = username && !invitationCode;
   const canJoinRoom = username && invitationCode.length === 6;
@@ -29,7 +37,7 @@ const Entry = () => {
           />
         </Form.Item>
         <Form.Item
-          label="초대 코드(숫자 6자리)"
+          label={`초대 코드(숫자 ${INVITATION_CODE_LENGTH}자리)`}
           name="inviationCode"
           rules={[
             {
@@ -39,10 +47,23 @@ const Entry = () => {
         >
           <Input
             placeholder="친구에게 전달받은 초대 코드를 입력해주세요."
-            onChange={(event) => setInvitationCode(event.target.value)}
-            maxLength={6}
+            onChange={(event) => {
+              setInvitationCode(event.target.value);
+              handleCloseErrorModal();
+            }}
+            maxLength={INVITATION_CODE_LENGTH}
           />
         </Form.Item>
+        {isErrorModalOpen && (
+          <Alert
+            message={error}
+            type="error"
+            closable
+            onClose={handleCloseErrorModal}
+            style={{ marginBottom: "1rem" }}
+            showIcon
+          />
+        )}
         <StyledFormItem>
           <Button
             type="primary"
