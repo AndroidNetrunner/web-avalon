@@ -72,11 +72,9 @@ export default function FinalResult({ description }: FinalResultProps) {
 }
 
 const StyledDiv = styled("div")`
-   {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-  }
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
 `;
 
 const StyledSpan = styled("span")<{ color: string }>`
