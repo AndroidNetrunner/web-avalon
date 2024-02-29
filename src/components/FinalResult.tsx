@@ -82,10 +82,6 @@ const StyledSpan = styled("span")<{ color: string }>`
   font-weight: bold;
 `;
 
-const StyledTitle = styled(Title)<{ goodWin: boolean }>`
-  color: ${(props) => (props.goodWin ? "blue" : "red")};
-`;
-
 const useGameEndAnalytics = (goodWin: boolean, isLeader: boolean) => {
   useEffect(() => {
     const analytics = getAnalytics();
@@ -97,11 +93,13 @@ const useGameEndAnalytics = (goodWin: boolean, isLeader: boolean) => {
   }, [goodWin, isLeader]);
 };
 
-const GameStatus = ({ goodWin }: { goodWin: boolean }) => (
-  <StyledTitle level={4} goodWin={goodWin}>
-    {goodWin ? "선의 세력 승리" : "악의 하수인 승리"}
-  </StyledTitle>
-);
+const GameStatus = ({ goodWin }: { goodWin: boolean }) => {
+  return (
+    <Title level={4} style={{ color: goodWin ? "blue" : "red" }}>
+      {goodWin ? "선의 세력 승리" : "악의 하수인 승리"}
+    </Title>
+  );
+};
 
 const WinDescription = ({ description }: { description: WinDescription }) => (
   <Title level={5}>{description}</Title>
