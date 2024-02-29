@@ -4,6 +4,7 @@ import React from "react";
 import { Form, Input, Button, Typography, Alert } from "antd";
 import useEnterRoom from "@/hooks/useEnterRoom";
 import styled from "styled-components";
+import Link from "antd/es/typography/Link";
 
 const INVITATION_CODE_LENGTH = 6;
 
@@ -25,6 +26,12 @@ const Entry = () => {
   return (
     <div>
       <Title level={3}>레지스탕스 아발론 온라인</Title>
+      <Link
+        href="https://velog.io/@kby9906/%EB%A0%88%EC%A7%80%EC%8A%A4%ED%83%95%EC%8A%A4-%EC%95%84%EB%B0%9C%EB%A1%A0-%EC%98%A8%EB%9D%BC%EC%9D%B8-%EC%84%A4%EB%AA%85%EC%84%9C"
+        target="_blank"
+      >
+        사이트가 처음이신가요?
+      </Link>
       <Form name="entry-form">
         <Form.Item
           label="닉네임"
