@@ -2,6 +2,7 @@ import useVoteResult from "@/hooks/useVoteResult";
 import useVoteResultState from "@/hooks/useVoteResultState";
 import { Button, Modal } from "antd";
 import React from "react";
+import styled from "styled-components";
 
 export default function VoteResult() {
   const { agree, disagree, isPassed, openVoteResultModal } =
@@ -21,8 +22,17 @@ export default function VoteResult() {
         </Button>
       }
     >
-      <p>찬성: {agree.join(", ")}</p>
-      <p>반대: {disagree.join(", ")}</p>
+      <p>
+        <StyledSpan color="blue">찬성:</StyledSpan> {agree.join(", ")}
+      </p>
+      <p>
+        <StyledSpan color="red">반대:</StyledSpan> {disagree.join(", ")}
+      </p>
     </Modal>
   );
 }
+
+const StyledSpan = styled("span")<{ color: string }>`
+  color: ${(props) => props.color};
+  font-weight: bold;
+`;
