@@ -58,7 +58,7 @@ const addUserToRoomInDatabase = async (
 export default function useEnterRoom() {
   const dispatch = useDispatch();
   const [error, setError] = useState<string | null>(null);
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [isErrorVisible, setIsErrorVisible] = useState(false);
 
   const updateUserAndRoomState = ({
     userId,
@@ -100,18 +100,18 @@ export default function useEnterRoom() {
       addUserToRoomInDatabase(invitationCode, userId, usernameInput);
     } catch (err) {
       setError("존재하지 않는 방입니다. 초대 코드를 확인해주세요.");
-      setIsErrorModalOpen(true);
+      setIsErrorVisible(true);
     }
   };
 
   const handleCloseErrorModal = () => {
-    setIsErrorModalOpen(false);
+    setIsErrorVisible(false);
   };
   return {
     handleCreateRoom,
     handleJoinRoom,
     error,
-    isErrorModalOpen,
+    isErrorModalOpen: isErrorVisible,
     handleCloseErrorModal,
   };
 }
