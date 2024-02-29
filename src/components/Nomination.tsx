@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { Player } from "@/interfaces/Player";
 import { numberOfNomination } from "@/constants/nomination";
+import styled from "styled-components";
 
 function createVoteObject(players: Player[]) {
   let vote: {
@@ -66,13 +67,17 @@ export default function Nomination() {
           </Checkbox>
         ))}
       </Checkbox.Group>
-      <Button
+      <StyledButton
         type="primary"
         onClick={handleSubmit}
         disabled={numberOfTeam !== team.length}
       >
         원정대 확정
-      </Button>
+      </StyledButton>
     </>
   );
 }
+
+const StyledButton = styled(Button)`
+  margin-top: 1rem;
+`;
