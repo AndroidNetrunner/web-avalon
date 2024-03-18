@@ -11,7 +11,7 @@ export default function BalancedOption() {
   };
   return (
     <div style={{ margin: "1rem 0" }}>
-      <Switch onChange={handleSwitchChange} /> 밸런스 모드 활성하기{" "}
+      <Switch onChange={handleSwitchChange} /> 밸런스 모드 활성화하기{" "}
       <Tooltip
         title={`5인과 7인일 때의 원정대 인원이 바뀝니다.\n
       5인: 3-2-3-2-3\n
