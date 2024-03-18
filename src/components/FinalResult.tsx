@@ -1,6 +1,6 @@
 import { GOOD_ROLES } from "@/constants/roles";
 import winDescriptions, {
-  WinDescription as WinDescription,
+  WinDescription as WinDescriptionType,
 } from "@/constants/winDescsriptions";
 import { Player } from "@/interfaces/Player";
 import { resetGame, selectPlayers } from "@/redux/slices/gameSlice";
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 interface FinalResultProps {
-  description: WinDescription;
+  description: WinDescriptionType;
 }
 
 const renderRole = (role: string) => {
@@ -101,9 +101,11 @@ const GameStatus = ({ goodWin }: { goodWin: boolean }) => {
   );
 };
 
-const WinDescription = ({ description }: { description: WinDescription }) => (
-  <Title level={5}>{description}</Title>
-);
+const WinDescription = ({
+  description,
+}: {
+  description: WinDescriptionType;
+}) => <Title level={5}>{description}</Title>;
 
 const PlayerTable = ({ players }: { players: Player[] }) => (
   <Table
