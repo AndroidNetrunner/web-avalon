@@ -21,6 +21,7 @@ import {
 import { DocumentData } from "firebase/firestore";
 import { setGameId } from "@/redux/slices/gameSlice";
 import { selectUserId } from "@/redux/slices/userSlice";
+import BalancedOption from "./BalancedOption";
 
 const isSamePlayersWithFirebaseStore = (
   data: DocumentData,
@@ -98,6 +99,7 @@ export default function Room() {
           <>
             <GameStartButton specialRoles={specialRoles} />
             <RoleOptions setSpecialRoles={setSpecialRoles} />
+            <BalancedOption />
           </>
         )}
         <Table dataSource={participants} columns={columns} />
