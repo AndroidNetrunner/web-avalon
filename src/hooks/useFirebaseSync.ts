@@ -5,6 +5,7 @@ import { database } from "../../firebase.config";
 import {
   selectGameId,
   selectPlayers,
+  setBalanced,
   setDescription,
   setPlayers,
   setRoundFail,
@@ -57,6 +58,7 @@ const useFirebaseGameSync = () => {
         if ("mission" in data) dispatch(setMissionTeam(data.mission));
         if ("stage" in data) dispatch(setStage(data.stage));
         if ("description" in data) dispatch(setDescription(data.description));
+        if ("balanced" in data) dispatch(setBalanced(data.balanced));
       }
     });
   }, [gameRef, dispatch, players]);

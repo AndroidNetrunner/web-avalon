@@ -8,6 +8,7 @@ interface GameState {
   roundSuccess: number;
   roundFail: number;
   description: WinDescription | null;
+  balanced: boolean;
 }
 
 const initialState: GameState = {
@@ -16,6 +17,7 @@ const initialState: GameState = {
   players: [],
   roundFail: 0,
   description: null,
+  balanced: false,
 };
 
 const gameSlice = createSlice({
@@ -46,6 +48,9 @@ const gameSlice = createSlice({
     setDescription: (state, action: PayloadAction<WinDescription>) => {
       state.description = action.payload;
     },
+    setBalanced: (state, action: PayloadAction<boolean>) => {
+      state.balanced = action.payload;
+    },
     resetGame: () => {
       return initialState;
     },
@@ -58,6 +63,7 @@ export const {
   setRoundSuccess,
   setRoundFail,
   setDescription,
+  setBalanced,
   resetGame,
 } = gameSlice.actions;
 
@@ -69,4 +75,6 @@ export const selectRoundFail = (state: { game: GameState }) =>
   state.game.roundFail;
 export const selectDescription = (state: { game: GameState }) =>
   state.game.description;
+export const selectBalanced = (state: { game: GameState }) =>
+  state.game.balanced;
 export default gameSlice.reducer;

@@ -1,4 +1,5 @@
 import {
+  selectBalanced,
   selectGameId,
   selectPlayers,
   selectRoundFail,
@@ -10,7 +11,10 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { Player } from "@/interfaces/Player";
-import { numberOfNomination } from "@/constants/nomination";
+import {
+  balancedNumberOfNomination,
+  numberOfNomination,
+} from "@/constants/nomination";
 import styled from "styled-components";
 
 function createVoteObject(players: Player[]) {
@@ -34,8 +38,10 @@ export default function Nomination() {
   const players = useSelector(selectPlayers);
   const numberOfPlayers = players.length as 5 | 6 | 7 | 8 | 9 | 10;
   const gameId = useSelector(selectGameId);
+  const balanced = useSelector(selectBalanced);
+  const roundSheet = balanced ? balancedNumberOfNomination : numberOfNomination;
   const numberOfTeam =
-    numberOfNomination[numberOfPlayers][
+    roundSheet[numberOfPlayers][
       useSelector(selectRoundSuccess) + useSelector(selectRoundFail)
     ];
   const [team, setTeam] = useState<string[]>([]);

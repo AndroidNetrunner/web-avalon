@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { Player, Role } from "@/interfaces/Player";
+import { selectBalanced } from "@/redux/slices/gameSlice";
 
 const MAX_EVIL_SPECIAL_ROLES = {
   5: 1,
@@ -28,6 +29,7 @@ export default function GameStartButton({
 }) {
   const participants = useSelector(selectParticipants);
   const invitationCode = useSelector(selectInvitationCode);
+  const balanced = useSelector(selectBalanced);
   const evilSpecialRoles = specialRoles.filter((role) => role !== "퍼시발");
   const goodSpecialRoles = specialRoles.filter((role) => role === "퍼시발");
   const canGameStart =
@@ -41,7 +43,7 @@ export default function GameStartButton({
     shuffle(roles);
     const players = makePlayers(roles);
     const leader = chooseLeader();
-    updateGame(players, leader.userId);
+    updateGame(players, leader.userId, balanced);
     remove(ref(database, "rooms/" + invitationCode));
     logGameStart();
   };
@@ -88,7 +90,7 @@ export default function GameStartButton({
     return leader;
   };
 
-  const updateGame = (players: Object, leader: string) => {
+  const updateGame = (players: Object, leader: string, balanced: boolean) => {
     update(ref(database, "games/" + invitationCode), {
       "/players": players,
       "/leader": leader,
@@ -98,6 +100,7 @@ export default function GameStartButton({
       "/election": 1,
       "/vote": {},
       "/stage": "nomination",
+      "/balanced": balanced,
     });
   };
 
