@@ -39,9 +39,9 @@ export default function Nomination() {
   const numberOfPlayers = players.length as 5 | 6 | 7 | 8 | 9 | 10;
   const gameId = useSelector(selectGameId);
   const balanced = useSelector(selectBalanced);
-  const roundSheet = balanced ? balancedNumberOfNomination : numberOfNomination;
+  const questSheet = balanced ? balancedNumberOfNomination : numberOfNomination;
   const numberOfTeam =
-    roundSheet[numberOfPlayers][
+    questSheet[numberOfPlayers][
       useSelector(selectRoundSuccess) + useSelector(selectRoundFail)
     ];
   const [team, setTeam] = useState<string[]>([]);
