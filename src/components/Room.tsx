@@ -9,7 +9,7 @@ import { Table, Typography } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Options from "./Options";
+import RoleOptions from "./RoleOptions";
 import GameStartButton from "./GameStartButton";
 import { database } from "../../firebase.config";
 import {
@@ -97,7 +97,7 @@ export default function Room() {
         {myUserId === ownerId && (
           <>
             <GameStartButton specialRoles={specialRoles} />
-            <Options setSpecialRoles={setSpecialRoles} />
+            <RoleOptions setSpecialRoles={setSpecialRoles} />
           </>
         )}
         <Table dataSource={participants} columns={columns} />

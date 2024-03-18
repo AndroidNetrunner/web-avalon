@@ -5,7 +5,7 @@ interface OptionsProps {
   setSpecialRoles: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function Options({ setSpecialRoles }: OptionsProps) {
+export default function RoleOptions({ setSpecialRoles }: OptionsProps) {
   const handleCheckboxChange = (checkedValues: string[]) => {
     setSpecialRoles(checkedValues);
   };
