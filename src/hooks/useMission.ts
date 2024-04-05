@@ -39,7 +39,8 @@ export const useMission = () => {
               }
               if (
                 (roundNumber !== 4 && missionFail > 0) ||
-                (players.length >= 7 && roundNumber === 4 && missionFail > 1)
+                (players.length >= 7 && roundNumber === 4 && missionFail > 1) ||
+                (players.length <= 6 && roundNumber === 4 && missionFail > 0)
               ) {
                 game.roundFail += 1;
               } else {
