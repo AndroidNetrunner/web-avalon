@@ -2,6 +2,7 @@ import { GOOD_ROLES } from "@/constants/roles";
 import winDescriptions, {
   WinDescription as WinDescriptionType,
 } from "@/constants/winDescsriptions";
+import useRejoin from "@/hooks/useRejoin";
 import { Player } from "@/interfaces/Player";
 import { resetGame, selectPlayers } from "@/redux/slices/gameSlice";
 import { resetRoom } from "@/redux/slices/roomSlice";
@@ -43,12 +44,11 @@ export default function FinalResult({ description }: FinalResultProps) {
   const dispatch = useDispatch();
   const leader = useSelector(selectLeader);
   const myUserId = useSelector(selectUserId);
+  const player = players.find((player) => player.userId === myUserId);
+  if (!player) throw new Error("플레이어 정보를 찾을 수 없습니다.");
   const isLeader = leader === myUserId;
   useGameEndAnalytics(goodWin, isLeader);
-  const handlePlayAgain = () => {
-    localStorage.removeItem("gameId");
-    dispatch(resetGame());
-  };
+  const { handleRejoin } = useRejoin();
   const handleExit = () => {
     localStorage.removeItem("userId");
     dispatch(resetRoom());
@@ -60,7 +60,7 @@ export default function FinalResult({ description }: FinalResultProps) {
       <WinDescription description={description} />
       <PlayerTable players={players} />
       <StyledDiv>
-        <Button type="primary" onClick={handlePlayAgain}>
+        <Button type="primary" onClick={() => handleRejoin(player)}>
           한 번 더!
         </Button>
         <Button type="primary" onClick={handleExit} danger>

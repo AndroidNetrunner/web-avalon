@@ -3,7 +3,7 @@ import {
   selectParticipants,
 } from "@/redux/slices/roomSlice";
 import { Alert, Button } from "antd";
-import { ref, remove, update } from "firebase/database";
+import { ref, remove, set, update } from "firebase/database";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { getAnalytics, logEvent } from "firebase/analytics";
@@ -38,13 +38,13 @@ export default function GameStartButton({
     evilSpecialRoles.length <=
       MAX_EVIL_SPECIAL_ROLES[participants.length as 5 | 6 | 7 | 8 | 9 | 10];
 
-  const handleGameStart = () => {
+  const handleGameStart = async () => {
     const roles = prepareRoles();
     shuffle(roles);
     const players = makePlayers(roles);
     const leader = chooseLeader();
     updateGame(players, leader.userId, balanced);
-    remove(ref(database, "rooms/" + invitationCode));
+    await remove(ref(database, "rooms/" + invitationCode));
     logGameStart();
   };
 
@@ -91,16 +91,16 @@ export default function GameStartButton({
   };
 
   const updateGame = (players: Object, leader: string, balanced: boolean) => {
-    update(ref(database, "games/" + invitationCode), {
-      "/players": players,
-      "/leader": leader,
-      "/roundSuccess": 0,
-      "/roundFail": 0,
-      "/team": {},
-      "/election": 1,
-      "/vote": {},
-      "/stage": "nomination",
-      "/balanced": balanced,
+    set(ref(database, "games/" + invitationCode), {
+      players: players,
+      leader: leader,
+      roundSuccess: 0,
+      roundFail: 0,
+      team: {},
+      election: 1,
+      vote: {},
+      stage: "nomination",
+      balanced: balanced,
     });
   };
 

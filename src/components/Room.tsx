@@ -3,6 +3,7 @@ import {
   selectOwnerId,
   selectParticipants,
   setInvitationCode,
+  setOwnerId,
   setParticipants,
 } from "@/redux/slices/roomSlice";
 import { Table, Typography } from "antd";
@@ -63,6 +64,7 @@ const useRoomData = (
           dispatch(
             setParticipants(convertObjectToParticipantsArray(data.participants))
           );
+        dispatch(setOwnerId(data.ownerId));
       } else {
         dispatch(setParticipants([]));
         dispatch(setGameId(invitationCode));
