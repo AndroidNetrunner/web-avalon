@@ -16,6 +16,7 @@ import {
   numberOfNomination,
 } from "@/constants/nomination";
 import styled from "styled-components";
+import React from "react";
 
 function createVoteObject(players: Player[]) {
   let vote: {

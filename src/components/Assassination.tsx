@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { database } from "../../firebase.config";
 import { Player } from "@/interfaces/Player";
+import { RootState } from "@/redux/store";
 
 const TARGET_ROLES = ["멀린", "퍼시발", "오베론", "선의 세력"];
 interface Options {
@@ -20,7 +21,10 @@ interface AssassinationViewProps {
 }
 
 export default function Assassination() {
-  const players: Player[] = useSelector(selectPlayers);
+  const { players, gameId } = useSelector((state: RootState) => ({
+    players: selectPlayers(state),
+    gameId: selectGameId(state),
+  }));
   const candidates: Player[] = players.filter((player) =>
     TARGET_ROLES.includes(player.role)
   );
@@ -28,7 +32,6 @@ export default function Assassination() {
     label: player.username,
     value: player.userId,
   }));
-  const gameId = useSelector(selectGameId);
   const [target, setTarget] = useState("");
   const onChange = (e: RadioChangeEvent) => {
     setTarget(e.target.value);

@@ -4,13 +4,14 @@ import winDescriptions, {
 } from "@/constants/winDescsriptions";
 import useRejoin from "@/hooks/useRejoin";
 import { Player } from "@/interfaces/Player";
-import { resetGame, selectPlayers } from "@/redux/slices/gameSlice";
+import { selectPlayers } from "@/redux/slices/gameSlice";
 import { resetRoom } from "@/redux/slices/roomSlice";
 import { selectLeader } from "@/redux/slices/roundSlice";
 import { resetUser, selectUserId } from "@/redux/slices/userSlice";
 import { Button, Table } from "antd";
 import Title from "antd/es/typography/Title";
 import { getAnalytics, logEvent } from "firebase/analytics";
+import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";

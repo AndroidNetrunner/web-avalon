@@ -1,6 +1,7 @@
 import { Button, Card } from "antd";
 import { useVote } from "@/hooks/useVote";
 import useVoteState from "@/hooks/useVoteState";
+import React from "react";
 
 function VoteButton({
   type,

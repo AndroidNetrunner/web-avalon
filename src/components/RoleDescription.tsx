@@ -1,6 +1,7 @@
 import { Player, Role } from "@/interfaces/Player";
 import { selectPlayers } from "@/redux/slices/gameSlice";
 import { selectUserId } from "@/redux/slices/userSlice";
+import React from "react";
 import { useSelector } from "react-redux";
 
 const roleToVisibleRoles: Partial<Record<Role, Role[]>> = {

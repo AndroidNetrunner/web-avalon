@@ -5,6 +5,7 @@ import Title from "antd/es/typography/Title";
 import RoleDescription from "./RoleDescription";
 import PlayersList from "./PlayersList";
 import { Role } from "@/interfaces/Player";
+import React from "react";
 
 export default function GamePlay({
   isEvil,

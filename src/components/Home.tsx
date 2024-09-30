@@ -5,6 +5,7 @@ import Room from "@/components/Room";
 import Game from "@/components/Game";
 import { useSelector } from "react-redux";
 import { selectGameId } from "@/redux/slices/gameSlice";
+import React from "react";
 
 export default function Home() {
   let userId: string | null = useSelector(selectUserId);
