@@ -24,6 +24,11 @@ import RoundStep from "./RoundStep";
 import Assassination from "./Assassination";
 import { WinDescription } from "@/constants/winDescsriptions";
 import { Role } from "@/interfaces/Player";
+import React from "react";
+import Card from "antd/es/card/Card";
+import { Spin, Typography } from "antd";
+
+const { Text } = Typography;
 
 export default function Turn() {
   const myUserId = useSelector(selectUserId);
@@ -128,5 +133,9 @@ function AssassinationTurn({
   description: WinDescription | null;
   myRole: Role;
 }) {
-  return !description && myRole === "암살자" ? <Assassination /> : null;
+  return !description && myRole === "암살자" ? (
+    <Assassination />
+  ) : (
+    <Text type={"danger"}>암살자가 암살 진행 중...</Text>
+  );
 }
