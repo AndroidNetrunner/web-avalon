@@ -76,6 +76,8 @@ const useRoomData = (
 
 const columns = [{ title: "닉네임", dataIndex: "username", key: "username" }];
 
+import AdSense from "./AdSense";
+
 export default function Room() {
   const participants = useSelector(selectParticipants);
   const invitationCode = useSelector(selectInvitationCode);
@@ -104,7 +106,19 @@ export default function Room() {
             <BalancedOption />
           </>
         )}
-        <Table dataSource={participants} columns={columns} />
+        <Table
+          dataSource={participants}
+          columns={columns}
+          footer={() => (
+            <AdSense
+              pId="1473493437844810"
+              slot="5369495644"
+              style={{ display: "block", textAlign: "center" }}
+              format="auto"
+              responsive="true"
+            />
+          )}
+        />
       </Content>
     </>
   );

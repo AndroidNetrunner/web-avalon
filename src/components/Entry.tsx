@@ -5,6 +5,7 @@ import { Form, Input, Button, Typography, Alert } from "antd";
 import useEnterRoom from "@/hooks/useEnterRoom";
 import styled from "styled-components";
 import Link from "antd/es/typography/Link";
+import AdSense from "./AdSense";
 
 const INVITATION_CODE_LENGTH = 6;
 
@@ -91,6 +92,13 @@ const Entry = () => {
             방 참가
           </Button>
         </StyledFormItem>
+        <AdSense
+          pId="1473493437844810"
+          slot="5369495644"
+          style={{ display: "block", marginTop: "20px" }}
+          format="auto"
+          responsive="true"
+        />
       </Form>
     </div>
   );
